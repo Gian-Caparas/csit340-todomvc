@@ -34,6 +34,24 @@ function handleClearCompleted() {
   setTodos(todos.filter((todo) => !todo.completed))
 }
 
+function handleToggleAll() {
+  const allDone = activeCount === 0
+  setTodos(todos.map((todo) => ({ ...todo, completed: !allDone })))
+}
+
+const [filter, setFilter] = useState('all')
+
+const visibleTodos = todos.filter((todo) => {
+  if (filter === 'active') return !todo.completed
+  if (filter === 'completed') return todo.completed
+  return true
+})
+
+const selectedClass =
+  'cursor-pointer rounded-[3px] border border-[#b83f45]/20 px-[7px] py-[3px]'
+const unselectedClass =
+  'cursor-pointer rounded-[3px] border border-transparent px-[7px] py-[3px] hover:border-[#b83f45]/10'
+
   return (
     <section className="mx-auto max-w-[550px]">
       <h1 className="text-center text-[80px] font-extralight text-[#b83f45]">
@@ -53,7 +71,13 @@ function handleClearCompleted() {
         {todos.length > 0 && (
           <>
         <main className="relative border-t border-[#e6e6e6]">
-          <input id="toggle-all" type="checkbox" className="peer sr-only" />
+          <input
+            id="toggle-all"
+            type="checkbox"
+            checked={activeCount === 0}
+            onChange={handleToggleAll}
+            className="peer sr-only"
+          />
           <label
             htmlFor="toggle-all"
             className="absolute -top-[66px] left-0 flex h-[65px] w-[60px] cursor-pointer items-center justify-center text-[22px] text-[#949494] peer-checked:text-[#484848]"
@@ -62,7 +86,7 @@ function handleClearCompleted() {
           </label>
 
           <ul>
-            {todos.map((todo) => (
+            {visibleTodos.map((todo) => (
                 <li
                 key={todo.id}
                 className="group relative flex items-center border-b border-[#ededed] text-2xl"
@@ -100,31 +124,18 @@ function handleClearCompleted() {
               {activeCount === 1 ? 'item' : 'items'} left
           </span>
           <ul className="flex justify-center gap-1">
-            <li>
+          {['all', 'active', 'completed'].map((name) => (
+            <li key={name}>
               <button
                 type="button"
-                className="cursor-pointer rounded-[3px] border border-[#b83f45]/20 px-[7px] py-[3px]"
+                onClick={() => setFilter(name)}
+                className={filter === name ? selectedClass : unselectedClass}
               >
-                All
+                {name[0].toUpperCase() + name.slice(1)}
               </button>
             </li>
-            <li>
-              <button
-                type="button"
-                className="cursor-pointer rounded-[3px] border border-transparent px-[7px] py-[3px] hover:border-[#b83f45]/10"
-              >
-                Active
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                className="cursor-pointer rounded-[3px] border border-transparent px-[7px] py-[3px] hover:border-[#b83f45]/10"
-              >
-                Completed
-              </button>
-            </li>
-          </ul>
+          ))}
+        </ul>
           {completedCount > 0 && (
           <button
             type="button"
