@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 function Todos() {
 const [text, setText] = useState('')
-  const [todos, setTodos] = useState([])
+const [todos, setTodos] = useState([])
 
 function handleSubmit(e) {
   e.preventDefault()
@@ -27,8 +27,13 @@ function handleDelete(id) {
   setTodos(todos.filter((todo) => todo.id !== id))
 }
 
-  const activeCount = todos.filter((todo) => !todo.completed).length
-  
+const activeCount = todos.filter((todo) => !todo.completed).length
+const completedCount = todos.length - activeCount
+
+function handleClearCompleted() {
+  setTodos(todos.filter((todo) => !todo.completed))
+}
+
   return (
     <section className="mx-auto max-w-[550px]">
       <h1 className="text-center text-[80px] font-extralight text-[#b83f45]">
@@ -120,9 +125,15 @@ function handleDelete(id) {
               </button>
             </li>
           </ul>
-          <button type="button" className="cursor-pointer justify-self-end hover:underline">
+          {completedCount > 0 && (
+          <button
+            type="button"
+            onClick={handleClearCompleted}
+            className="cursor-pointer justify-self-end hover:underline"
+          >
             Clear completed
           </button>
+        )}
         </footer>
         </>
         )}
